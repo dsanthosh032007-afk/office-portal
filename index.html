@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Office Notice Portal | College Mini-Project</title>
+  <meta name="description" content="A professional office notice board and administration dashboard built with HTML, CSS, and Vanilla JavaScript with LocalStorage persistence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Academic Prototype Disclaimer Banner -->
+  <aside class="academic-banner" role="alert">
+    <div class="container banner-inner">
+      <span class="badge-pill">Local Prototype</span>
+      <p>
+        <strong>Academic Demonstration:</strong> This is a client-side office notice portal prototype using the browser's <code>localStorage</code> API. It does not connect to a multi-user cloud database or authentication server.
+      </p>
+    </div>
+  </aside>
+
+  <!-- App Header / Intranet Navbar -->
+  <header class="app-header">
+    <div class="container header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            <line x1="9" y1="12" x2="15" y2="12"></line>
+            <line x1="9" y1="16" x2="13" y2="16"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Office Notice Portal</h1>
+          <span class="project-tag">Administrative Bulletin Board &bull; LocalStorage Edition</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btnLoadDemo" class="btn btn-secondary btn-sm" title="Restore sample notices">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+            <path d="M16 21h5v-5"></path>
+          </svg>
+          Load Samples
+        </button>
+
+        <button id="btnResetAll" class="btn btn-danger-outline btn-sm" title="Clear all notices from localStorage">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Clear All
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+
+    <!-- KPI Summary Cards -->
+    <section class="kpi-grid" aria-label="Portal Statistics">
+      
+      <!-- Total Notices -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Active Notices</span>
+          <div class="kpi-icon icon-blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <h2 id="totalNoticesCount" class="kpi-value">0</h2>
+          <span class="kpi-badge badge-neutral">Published</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-subtext" id="kpiCategorySummary">Across 4 categories</span>
+        </div>
+      </div>
+
+      <!-- Urgent Notices -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Urgent Alerts</span>
+          <div class="kpi-icon icon-red">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <h2 id="urgentNoticesCount" class="kpi-value text-urgent">0</h2>
+          <span id="urgentBadge" class="kpi-badge badge-urgent">Priority</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-subtext">Requires immediate attention</span>
+        </div>
+      </div>
+
+      <!-- Events & Exams -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Events &amp; Exams</span>
+          <div class="kpi-icon icon-purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <h2 id="eventsExamsCount" class="kpi-value text-purple">0</h2>
+          <span class="kpi-badge badge-neutral">Scheduled</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-subtext" id="eventsBreakdownText">0 Events &bull; 0 Exams</span>
+        </div>
+      </div>
+
+      <!-- Holidays -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Upcoming Holidays</span>
+          <div class="kpi-icon icon-green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-body">
+          <h2 id="holidaysCount" class="kpi-value text-green">0</h2>
+          <span class="kpi-badge badge-neutral">Campus Off</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-subtext">Official calendar updates</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Main Workspace Layout (2 Columns: Form on Left, Notices Feed on Right) -->
+    <div class="workspace-grid">
+
+      <!-- Left Column: Admin Create / Edit Notice Form -->
+      <aside class="form-column">
+        
+        <div class="card form-card" id="formCard">
+          <div class="card-header form-card-header">
+            <div>
+              <h3 id="formTitleText">Post New Notice</h3>
+              <p class="card-subtitle" id="formSubtitleText">Broadcast an announcement to the office</p>
+            </div>
+            <button type="button" id="btnCancelEdit" class="btn-cancel-edit" style="display: none;" title="Cancel editing">
+              Cancel Edit
+            </button>
+          </div>
+
+          <form id="noticeForm" novalidate>
+            <!-- Hidden Notice ID for Edit Mode -->
+            <input type="hidden" id="noticeId" value="">
+
+            <!-- Notice Title -->
+            <div class="form-group">
+              <label for="noticeTitle" class="form-label">
+                Notice Title <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="noticeTitle" 
+                class="form-control" 
+                placeholder="e.g. End-Semester Examination Schedule" 
+                maxlength="100" 
+                required
+              >
+              <small class="error-msg" id="titleError"></small>
+            </div>
+
+            <!-- Category & Priority Grid -->
+            <div class="form-row">
+              
+              <!-- Category -->
+              <div class="form-group col-half">
+                <label for="noticeCategory" class="form-label">
+                  Category <span class="required">*</span>
+                </label>
+                <select id="noticeCategory" class="form-control select-dropdown" required>
+                  <option value="General" selected>General</option>
+                  <option value="Events">Events</option>
+                  <option value="Exams">Exams</option>
+                  <option value="Holidays">Holidays</option>
+                </select>
+                <small class="error-msg" id="categoryError"></small>
+              </div>
+
+              <!-- Priority -->
+              <div class="form-group col-half">
+                <label for="noticePriority" class="form-label">
+                  Priority Level <span class="required">*</span>
+                </label>
+                <select id="noticePriority" class="form-control select-dropdown" required>
+                  <option value="Urgent">🚨 Urgent (Top Alert)</option>
+                  <option value="High">⚠️ High Priority</option>
+                  <option value="Normal" selected>ℹ️ Normal</option>
+                  <option value="Low">💤 Low</option>
+                </select>
+                <small class="error-msg" id="priorityError"></small>
+              </div>
+
+            </div>
+
+            <!-- Date & Department / Issuer Grid -->
+            <div class="form-row">
+              
+              <!-- Date -->
+              <div class="form-group col-half">
+                <label for="noticeDate" class="form-label">
+                  Date <span class="required">*</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="noticeDate" 
+                  class="form-control" 
+                  required
+                >
+                <small class="error-msg" id="dateError"></small>
+              </div>
+
+              <!-- Department / Issued By -->
+              <div class="form-group col-half">
+                <label for="noticeDepartment" class="form-label">
+                  Issued By
+                </label>
+                <input 
+                  type="text" 
+                  id="noticeDepartment" 
+                  class="form-control" 
+                  placeholder="e.g. Dean Office, HR"
+                  maxlength="50"
+                  value="Office Administration"
+                >
+              </div>
+
+            </div>
+
+            <!-- Notice Description / Message -->
+            <div class="form-group">
+              <label for="noticeDescription" class="form-label">
+                Notice Content / Description <span class="required">*</span>
+              </label>
+              <textarea 
+                id="noticeDescription" 
+                class="form-control textarea-control" 
+                rows="5" 
+                placeholder="Enter complete notice details, instructions, or official guidelines..." 
+                required
+              ></textarea>
+              <small class="error-msg" id="descError"></small>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="btnSubmitNotice" class="btn btn-primary btn-block">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              <span id="btnSubmitText">Publish Notice</span>
+            </button>
+
+          </form>
+        </div>
+
+      </aside>
+
+      <!-- Right Column: Search, Category Filters, and Notices Feed -->
+      <section class="notices-column">
+        
+        <!-- Search & Filter Controls Toolbar Card -->
+        <div class="card toolbar-card">
+          
+          <!-- Search Box -->
+          <div class="search-box">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="searchNoticeInput" 
+              class="form-control search-input" 
+              placeholder="Search notices by title, keyword, or issuer..."
+            >
+            <button type="button" id="btnClearSearch" class="btn-clear-search" style="display: none;" title="Clear search">
+              &times;
+            </button>
+          </div>
+
+          <!-- Category Filter Tabs & Priority Filter -->
+          <div class="filter-bar-row">
+            
+            <!-- Category Filter Tabs -->
+            <div class="category-tabs" role="tablist" aria-label="Category Filters">
+              <button type="button" class="cat-tab active" data-category="all">All</button>
+              <button type="button" class="cat-tab" data-category="General">General</button>
+              <button type="button" class="cat-tab" data-category="Events">Events</button>
+              <button type="button" class="cat-tab" data-category="Exams">Exams</button>
+              <button type="button" class="cat-tab" data-category="Holidays">Holidays</button>
+            </div>
+
+            <!-- Priority Dropdown Filter -->
+            <div class="priority-filter-wrap">
+              <select id="priorityFilterSelect" class="form-control filter-select" title="Filter by priority">
+                <option value="all">All Priorities</option>
+                <option value="Urgent">🚨 Urgent Only</option>
+                <option value="High">⚠️ High Priority</option>
+                <option value="Normal">ℹ️ Normal</option>
+                <option value="Low">💤 Low</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- Active Filter Pill Indicator -->
+          <div id="filterNoticeBar" class="active-filter-bar" style="display: none;">
+            <span id="activeFilterText">Filtered view</span>
+            <button type="button" id="btnResetFilters" class="btn-reset-filters">Reset Filters</button>
+          </div>
+
+        </div>
+
+        <!-- Notices Feed Container -->
+        <div class="notices-feed" id="noticesFeedContainer">
+          <!-- Dynamically populated notice cards -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="emptyNoticeState" class="empty-state-card" style="display: none;">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <h4 id="emptyTitle">No Notices Found</h4>
+          <p id="emptyDesc">Try adjusting your search terms or category filter, or click "Load Samples" above.</p>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- College Project Technical Footer -->
+    <footer class="project-info-footer">
+      <div class="footer-card">
+        <div class="footer-header">
+          <h4>🎓 Project Specifications &amp; Working Mechanism</h4>
+          <span class="badge-pill">College Mini-Project Showcase</span>
+        </div>
+
+        <div class="footer-content-grid">
+          <div class="footer-col">
+            <h5>1. CRUD &amp; LocalStorage State Machine</h5>
+            <p>
+              Provides complete <strong>Create, Read, Update, and Delete (CRUD)</strong> operations. Every administrative modification is serialized to JSON and persisted under the key <code>office_notice_portal_items_v1</code>, surviving full browser restarts without external databases.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h5>2. Dynamic Real-Time Querying</h5>
+            <p>
+              Implements client-side JavaScript <code>Array.prototype.filter()</code> to evaluate simultaneous title substring searches, category criteria (General, Events, Exams, Holidays), and priority levels with instant DOM re-rendering.
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-tags-row">
+          <span class="tag">&check; 100% Client-Side Intranet</span>
+          <span class="tag">&check; LocalStorage Persistence</span>
+          <span class="tag">&check; Full CRUD Notice Management</span>
+          <span class="tag">&check; Urgent Priority Visual Highlights</span>
+          <span class="tag">&check; Multi-Category Filters</span>
+          <span class="tag">&check; Instant Substring Search</span>
+          <span class="tag">&check; Responsive Design</span>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h3 id="modalTitle">Confirm Notice Deletion</h3>
+      </div>
+      <div class="modal-body">
+        <p id="modalMessage">Are you sure you want to permanently delete this notice? This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button id="modalBtnCancel" class="btn btn-secondary">Cancel</button>
+        <button id="modalBtnConfirm" class="btn btn-danger">Delete Notice</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
